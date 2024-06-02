@@ -26,16 +26,3 @@ export function pathInTreeNodes(
   }
   return null;
 }
-
-export function findInTree(value: string, nodes: TreeNode[]): TreeNode | null {
-  for (const n of nodes) {
-    if (n.value == value) {
-      return n;
-    }
-    const f = findInTree(value, n.nodes);
-    if (f) {
-      return f;
-    }
-  }
-  return null;
-}

@@ -4,7 +4,7 @@ import React from "react";
 
 import { Form, Field, useForm } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
-import { parentPath, pathInTreeNodes, TreeNode } from "./functions";
+import { reParent } from "./reParent";
 
 const initialValues = {
   nodes: [
@@ -80,25 +80,7 @@ function App() {
         initialValues={initialValues}
         mutators={{
           ...arrayMutators,
-          reParent: ([name, dstParentValue]: string[], state, tools) => {
-            const values = state.formState.values as { nodes: TreeNode[] };
-            const node: TreeNode = tools.getIn(values, name);
-            const srcParentName = parentPath(name);
-            const dstParentName = pathInTreeNodes(dstParentValue, values.nodes);
-            if (dstParentName != null && srcParentName != null) {
-              const dstParent: TreeNode = tools.getIn(values, dstParentName);
-              tools.changeValue(
-                state,
-                `${srcParentName}.nodes`,
-                (nodes: TreeNode[]) =>
-                  nodes.filter((n) => n.value != node.value)
-              );
-              tools.changeValue(state, `${dstParentName}.nodes`, (nodes) => [
-                ...nodes,
-                { ...node, parent: dstParent.value },
-              ]);
-            }
-          },
+          reParent,
         }}
         render={({ handleSubmit, form, invalid, pristine }) => (
           <form onSubmit={handleSubmit}>
